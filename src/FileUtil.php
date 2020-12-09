@@ -7,14 +7,14 @@ use Intervention\Image\Facades\Image;
 class FileUtil
 {
 
-    public $rootProjectDir = '';
-    public $filesFolder = '';
+    public $rootFilesFolder = '';
+    public $relativeFilesFolder = '';
 
-    public function __construct($rootProjectDir, $filesFolder)
+    public function __construct($rootFilesFolder, $relativeFilesFolder)
     {
-//        $this->rootProjectDir = str_replace('vendor/dicicip/php-file-upload/src/Test', '', __DIR__);
-        $this->rootProjectDir = $rootProjectDir;
-        $this->filesFolder = $filesFolder;
+        echo $rootFilesFolder;
+        $this->rootFilesFolder = $rootFilesFolder;
+        $this->relativeFilesFolder = $relativeFilesFolder;
     }
 
 
@@ -29,47 +29,52 @@ class FileUtil
     public function storeBase64ToTemp($strBase64, $thumbQuality = 15)
     {
 
-        return "{$this->rootProjectDir}/{$this->filesFolder}";
-
-        if (empty($filePath)) {
-            return null;
+        /*Is Directory Exist ?*/
+        if (!is_dir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}")) {
+            mkdir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}", 0777, true);
         }
 
-        if (!is_dir("{$this->rootProjectDir}/{$this->filesFolder}")) {
-            mkdir("{$this->rootProjectDir}/{$this->filesFolder}", 0777, true);
-        }
-
-        if (!is_dir("{$this->rootProjectDir}/{$this->filesFolder}/thumb/")) {
-            mkdir("{$this->rootProjectDir}/{$this->filesFolder}/thumb/", 0777, true);
+        if (!is_dir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}/thumb/")) {
+            mkdir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}/thumb/", 0777, true);
         }
 
         /*Is Image File ?*/
-        $ext = pathinfo($filePath, PATHINFO_EXTENSION);
+        $ext = $this->base64Extension($strBase64);
+        $filename = time() . '.' . time() . $ext;
 
-        if (strpos(mime_content_type($filePath), 'image') == false) {
+        $path = "{$this->rootFilesFolder}/{$this->relativeFilesFolder}/{$filename}";
+        $relativeFilePath = "{$this->relativeFilesFolder}/{$filename}";
+
+        if (strpos($this->getMIMEType($strBase64), 'image') == false) {
 
             /*file*/
-            $filename = time() . '.' . time() . $ext;
+            file_put_contents("{$path}/{$filename}", file_get_contents(base64_decode($strBase64)));
 
-            $path = "{$relativeTargetFolder}/{$filename}";
-            rename($filePath, $path);
-
-            return "{$relativeTargetFolder}/{$filename}";
+            return new \DicicipFileInfo(
+                "{$path}/{$filename}",
+                "",
+                $relativeFilePath,
+                "",
+                $filename
+            );
 
         } else {
 
             /*image*/
             $file = Image::make($strBase64);
 
-            $filename = time() . '.' . time() . '.' . $ext;
-
-            $path = "{$relativeTargetFolder}/{$filename}";
-            $thumbPath = "thumb/{$relativeTargetFolder}/{$filename}";
+            $thumbPath = "{$this->rootFilesFolder}/thumb/{$this->relativeFilesFolder}/{$filename}";
 
             $file->save($path);
             $file->save($thumbPath, $thumbQuality);
 
-            return "{$relativeTargetFolder}/{$filename}";
+            return new \DicicipFileInfo(
+                "{$this->rootFilesFolder}/{$this->relativeFilesFolder}/{$filename}",
+                $thumbPath,
+                $relativeFilePath,
+                "thumb/{$this->relativeFilesFolder}/{$filename}",
+                $filename
+            );
 
         }
 
@@ -185,10 +190,14 @@ class FileUtil
      * @return string File mime type
      *
      */
-    public static function getMIMEType($base64string)
+    public static function getMIMEType($base64string): string
     {
-        preg_match("/^data:(.*);base64/", $base64string, $match);
-        return $match[1];
+        try {
+            preg_match("/^data:(.*);base64/", $base64string, $match);
+            return $match[1];
+        } catch (\Exception $e) {
+            return "";
+        }
     }
 
     /**
