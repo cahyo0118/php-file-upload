@@ -20,10 +20,14 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/Test" />
     </key>
@@ -36,7 +40,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1607529255746</updated>
-      <workItem from="1607529256842" duration="1796000" />
+      <workItem from="1607529256842" duration="9706000" />
     </task>
     <servers />
   </component>
@@ -44,10 +48,10 @@
     <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="420" y="-750" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1607530167340">
+    <state x="420" y="-1080" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1607543698179">
       <screen x="-253" y="-1080" width="1920" height="1080" />
     </state>
-    <state x="420" y="-750" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/-253.-1080.1920.1080/0.0.1680.1050@-253.-1080.1920.1080" timestamp="1607530167340" />
+    <state x="420" y="-1080" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/-253.-1080.1920.1080/0.0.1680.1050@-253.-1080.1920.1080" timestamp="1607543698179" />
     <state x="445" y="-781" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1607529907808">
       <screen x="-253" y="-1080" width="1920" height="1080" />
     </state>
@@ -56,5 +60,13 @@
       <screen x="-253" y="-1080" width="1920" height="1080" />
     </state>
     <state x="469" y="-610" key="ComposerInitDialogKey/-253.-1080.1920.1080/0.0.1680.1050@-253.-1080.1920.1080" timestamp="1607529997115" />
+    <state x="-153" y="-980" width="1720" height="880" key="dock-window-1" timestamp="1607540380642">
+      <screen x="-253" y="-1055" width="1920" height="1055" />
+    </state>
+    <state x="-153" y="-980" width="1720" height="880" key="dock-window-1/-253.-1055.1920.1055/0.25.1680.947@-253.-1055.1920.1055" timestamp="1607540380642" />
+    <state x="372" y="-839" width="670" height="676" key="search.everywhere.popup" timestamp="1607536509835">
+      <screen x="-253" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="372" y="-839" width="670" height="676" key="search.everywhere.popup/-253.-1080.1920.1080/0.0.1680.1050@-253.-1080.1920.1080" timestamp="1607536509835" />
   </component>
 </project>

@@ -1,16 +1,18 @@
 {
-    "name": "dicicip/php-file-upload",
-    "authors": [
-        {
-            "name": "N. Cahyo",
-            "email": "nurcahyoputro0@gmail.com"
-        }
-    ],
-    "require": {
-        "php": "^7.2.5",
-        "intervention/image": "^2.5"
-    },
-    "autoload": {
-        "psr-4": {"Dicicip\\FileUpload\\": "src/"}
+  "name": "dicicip/php-file-upload",
+  "authors": [
+    {
+      "name": "N. Cahyo",
+      "email": "nurcahyoputro0@gmail.com"
     }
+  ],
+  "require": {
+    "php": "^7.2.5",
+    "intervention/image": "^2.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dicicip\\FileUpload\\": "src/"
+    }
+  }
 }

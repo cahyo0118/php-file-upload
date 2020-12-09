@@ -1,12 +1,28 @@
 <?php
-namespace Cahyo\FileUpload\Test;
 
-use Dicicip\FileUpload\FileUploadUtil;
+namespace Dicicip\FileUpload\Test;
 
-class ScriptTest {
+use Dicicip\FileUpload\FileUtil;
+use Dicicip\FileUpload\SimpleFileUtil;
 
-    public function AduhDek() {
-        $file_upload_util = FileUploadUtil::base64Extension("");
+class ScriptTest
+{
+
+    public function __construct()
+    {
+        SimpleFileUtil::getMIMEType('');
+//        FileUtil::getMIMEType('');
+//        $fileUtil = new FileUtil('/Users/cahyo/project/dicicip/php-file-upload', 'files');
+//        echo($fileUtil->storeBase64ToTemp(''));
+    }
+
+    public function AduhDek()
+    {
+//        $file_upload_util = FileUtil::base64Extension("");
+
+//        error_log(__DIR__);
     }
 
 }
+
+new ScriptTest();
