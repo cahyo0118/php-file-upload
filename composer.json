@@ -1,5 +1,6 @@
 {
   "name": "dicicip/php-file-upload",
+  "license": "MIT",
   "authors": [
     {
       "name": "N. Cahyo",
