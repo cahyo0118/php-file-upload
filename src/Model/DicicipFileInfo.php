@@ -1,4 +1,5 @@
 <?php
+namespace Dicicip\FileUpload\Model;
 
 class DicicipFileInfo
 {

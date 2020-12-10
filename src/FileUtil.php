@@ -2,6 +2,7 @@
 
 namespace Dicicip\FileUpload;
 
+use Dicicip\FileUpload\Model\DicicipFileInfo;
 use Intervention\Image\Facades\Image;
 
 class FileUtil
@@ -34,23 +35,24 @@ class FileUtil
             mkdir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}", 0777, true);
         }
 
-        if (!is_dir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}/thumb/")) {
-            mkdir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}/thumb/", 0777, true);
+        if (!is_dir("{$this->rootFilesFolder}/thumb/{$this->relativeFilesFolder}/")) {
+            mkdir("{$this->rootFilesFolder}/thumb/{$this->relativeFilesFolder}/", 0777, true);
         }
 
         /*Is Image File ?*/
         $ext = $this->base64Extension($strBase64);
-        $filename = time() . '.' . time() . $ext;
+        $filename = time() . '.' . time() . '.' . $ext;
 
         $path = "{$this->rootFilesFolder}/{$this->relativeFilesFolder}/{$filename}";
         $relativeFilePath = "{$this->relativeFilesFolder}/{$filename}";
 
-        if (strpos($this->getMIMEType($strBase64), 'image') == false) {
+        error_log(strpos($this->getMIMEType($strBase64), 'image'));
+        if (strpos($this->getMIMEType($strBase64), 'image') === false) {
 
             /*file*/
-            file_put_contents("{$path}/{$filename}", file_get_contents(base64_decode($strBase64)));
+            file_put_contents($path, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $strBase64)));
 
-            return new \DicicipFileInfo(
+            return new DicicipFileInfo(
                 "{$path}/{$filename}",
                 "",
                 $relativeFilePath,
@@ -68,7 +70,7 @@ class FileUtil
             $file->save($path);
             $file->save($thumbPath, $thumbQuality);
 
-            return new \DicicipFileInfo(
+            return new DicicipFileInfo(
                 "{$this->rootFilesFolder}/{$this->relativeFilesFolder}/{$filename}",
                 $thumbPath,
                 $relativeFilePath,
