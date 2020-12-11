@@ -114,7 +114,7 @@ class FileUtil
         $filename = time() . '.' . time() . '.' . $ext;
 
         $path = "{$this->rootFilesDirectory}/{$targetRelativeDirectory}/{$filename}";
-        $relativeFilePath = "{$this->relativeFilesDirectory}/{$filename}";
+        $relativeFilePath = "{$targetRelativeDirectory}/{$filename}";
 
         if (strpos(mime_content_type($tempFullPath), 'image') === false) {
 
@@ -131,8 +131,8 @@ class FileUtil
 
         } else {
 
-            $thumbPath = "{$this->rootFilesDirectory}/thumb/{$this->relativeFilesDirectory}/{$filename}";
-            $relativeThumbPath = "thumb/{$this->relativeFilesDirectory}/{$filename}";
+            $thumbPath = "{$this->rootFilesDirectory}/thumb/{$targetRelativeDirectory}/{$filename}";
+            $relativeThumbPath = "thumb/{$targetRelativeDirectory}/{$filename}";
 
             /*image*/
             rename($tempFullPath, $path);
