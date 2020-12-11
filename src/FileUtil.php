@@ -8,52 +8,51 @@ use Intervention\Image\Facades\Image;
 class FileUtil
 {
 
-    public $rootFilesFolder = '';
-    public $relativeFilesFolder = '';
+    public $rootFilesDirectory = '';
+    public $relativeFilesDirectory = '';
+    public $directoryPermission = 0777;
 
-    public function __construct($rootFilesFolder, $relativeFilesFolder)
+    public function __construct($rootFilesDirectory, $relativeFilesDirectory, $directoryPermission = 0777)
     {
-        echo $rootFilesFolder;
-        $this->rootFilesFolder = $rootFilesFolder;
-        $this->relativeFilesFolder = $relativeFilesFolder;
+        $this->rootFilesDirectory = $rootFilesDirectory;
+        $this->relativeFilesDirectory = $relativeFilesDirectory;
+        $this->directoryPermission = $directoryPermission;
     }
-
 
     /**
      * Store String Base64 File to Temporary Folder
      *
      * @param string $str64 Fill with a string Base64
      *
-     * @return string Temporary File Path
+     * @return DicicipFileInfo
      *
      */
     public function storeBase64ToTemp($strBase64, $thumbQuality = 15)
     {
 
         /*Is Directory Exist ?*/
-        if (!is_dir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}")) {
-            mkdir("{$this->rootFilesFolder}/{$this->relativeFilesFolder}", 0777, true);
+        if (!is_dir("{$this->rootFilesDirectory}/{$this->relativeFilesDirectory}")) {
+            mkdir("{$this->rootFilesDirectory}/{$this->relativeFilesDirectory}", $this->directoryPermission, true);
         }
 
-        if (!is_dir("{$this->rootFilesFolder}/thumb/{$this->relativeFilesFolder}/")) {
-            mkdir("{$this->rootFilesFolder}/thumb/{$this->relativeFilesFolder}/", 0777, true);
+        if (!is_dir("{$this->rootFilesDirectory}/thumb/{$this->relativeFilesDirectory}/")) {
+            mkdir("{$this->rootFilesDirectory}/thumb/{$this->relativeFilesDirectory}/", $this->directoryPermission, true);
         }
 
         /*Is Image File ?*/
         $ext = $this->base64Extension($strBase64);
         $filename = time() . '.' . time() . '.' . $ext;
 
-        $path = "{$this->rootFilesFolder}/{$this->relativeFilesFolder}/{$filename}";
-        $relativeFilePath = "{$this->relativeFilesFolder}/{$filename}";
+        $path = "{$this->rootFilesDirectory}/{$this->relativeFilesDirectory}/{$filename}";
+        $relativeFilePath = "{$this->relativeFilesDirectory}/{$filename}";
 
-        error_log(strpos($this->getMIMEType($strBase64), 'image'));
         if (strpos($this->getMIMEType($strBase64), 'image') === false) {
 
             /*file*/
             file_put_contents($path, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $strBase64)));
 
             return new DicicipFileInfo(
-                "{$path}/{$filename}",
+                $path,
                 "",
                 $relativeFilePath,
                 "",
@@ -65,16 +64,17 @@ class FileUtil
             /*image*/
             $file = Image::make($strBase64);
 
-            $thumbPath = "{$this->rootFilesFolder}/thumb/{$this->relativeFilesFolder}/{$filename}";
+            $thumbPath = "{$this->rootFilesDirectory}/thumb/{$this->relativeFilesDirectory}/{$filename}";
+            $relativeThumbPath = "thumb/{$this->relativeFilesDirectory}/{$filename}";
 
             $file->save($path);
             $file->save($thumbPath, $thumbQuality);
 
             return new DicicipFileInfo(
-                "{$this->rootFilesFolder}/{$this->relativeFilesFolder}/{$filename}",
+                $path,
                 $thumbPath,
                 $relativeFilePath,
-                "thumb/{$this->relativeFilesFolder}/{$filename}",
+                $relativeThumbPath,
                 $filename
             );
 
@@ -83,102 +83,68 @@ class FileUtil
     }
 
     /**
-     * Store String Base64 File to Temporary Folder
+     * Move temporary uploaded file and thumbnail to real directory
      *
-     * @param string $str64 Fill with a string Base64
+     * @param string $tempFileRelativePath Path To Temporary File
+     * @param string $targetRelativeDirectory Path To Real Folder
      *
-     * @return string Temporary File Path
+     * @return DicicipFileInfo
      *
      */
-    public static function storeTempFileTo($tempFilePath, $targetDirectory)
+    public function storeTempFileTo($tempFileRelativePath, $targetRelativeDirectory)
     {
-        if (empty($tempFilePath)) {
+
+        $tempFullPath = "{$this->rootFilesDirectory}/{$tempFileRelativePath}";
+
+        if (empty($tempFileRelativePath)) {
             return null;
         }
 
-        if (!is_dir($targetDirectory)) {
-            mkdir($targetDirectory, 0777, true);
+        /*Is Directory Exist ?*/
+        if (!is_dir("{$this->rootFilesDirectory}/{$targetRelativeDirectory}")) {
+            mkdir("{$this->rootFilesDirectory}/{$targetRelativeDirectory}", $this->directoryPermission, true);
         }
 
-        if (!is_dir("thumb/{$targetDirectory}")) {
-            mkdir("thumb/{$targetDirectory}", 0777, true);
+        if (!is_dir("{$this->rootFilesDirectory}/thumb/{$targetRelativeDirectory}")) {
+            mkdir("{$this->rootFilesDirectory}/thumb/{$targetRelativeDirectory}", $this->directoryPermission, true);
         }
 
         /*Is Image File ?*/
-        $ext = pathinfo($tempFilePath, PATHINFO_EXTENSION);
+        $ext = pathinfo($tempFullPath, PATHINFO_EXTENSION);
+        $filename = time() . '.' . time() . $ext;
 
-        if (strpos(mime_content_type($tempFilePath), 'image') == false) {
+        $path = "{$this->rootFilesDirectory}/{$targetRelativeDirectory}/{$filename}";
+        $relativeFilePath = "{$this->relativeFilesDirectory}/{$filename}";
+
+        if (strpos(mime_content_type($tempFullPath), 'image') === false) {
 
             /*file*/
-            $filename = time() . '.' . time() . $ext;
+            rename($tempFullPath, $path);
 
-            $path = "{$targetDirectory}/{$filename}";
-            rename($tempFilePath, $path);
-
-            return "{$targetDirectory}/{$filename}";
+            return new DicicipFileInfo(
+                $path,
+                "",
+                $relativeFilePath,
+                "",
+                $filename
+            );
 
         } else {
 
-            /*image*/
-            $file = Image::make($tempFilePath);
-
-            $filename = time() . '.' . time() . '.' . $ext;
-
-            $path = "{$targetDirectory}/{$filename}";
-            $thumbPath = "thumb/{$targetDirectory}/{$filename}";
-
-            $file->save($path);
-            $file->save($thumbPath, 15);
-
-            return "{$targetDirectory}/{$filename}";
-
-        }
-
-    }
-
-    public static function storeFileWithThumbnail($filePath, $targetFolder): string
-    {
-
-        $filePath = "files/{$filePath}";
-
-        if (empty($filePath)) {
-            return "";
-        }
-
-        if (!is_dir(public_path("files/{$targetFolder}"))) {
-            mkdir(public_path("files/{$targetFolder}"), 0777, true);
-        }
-
-        if (!is_dir(public_path("files/thumb/{$targetFolder}"))) {
-            mkdir(public_path("files/thumb/{$targetFolder}"), 0777, true);
-        }
-
-        $ext = pathinfo($filePath, PATHINFO_EXTENSION);
-
-        if (strpos(mime_content_type(public_path($filePath)), 'image') !== false) {
+            $thumbPath = "{$this->rootFilesDirectory}/thumb/{$this->relativeFilesDirectory}/{$filename}";
+            $relativeThumbPath = "thumb/{$this->relativeFilesDirectory}/{$filename}";
 
             /*image*/
-            $file = Image::make(public_path($filePath));
+            rename($tempFullPath, $path);
+            rename("{$this->rootFilesDirectory}/thumb/{$tempFileRelativePath}", $thumbPath);
 
-            $filename = time() . '.' . Str::random(6) . '.' . $ext;
-
-            $path = public_path("files/{$targetFolder}/{$filename}");
-            $thumbPath = public_path("files/thumb/{$targetFolder}/{$filename}");
-
-            $file->save($path);
-            $file->save($thumbPath, 15);
-
-            return "{$targetFolder}/{$filename}";
-
-        } else {
-
-            /*file*/
-            $filename = time() . '.' . Str::random(6) . $ext;
-
-            $path = public_path("{$targetFolder}/{$filename}");
-            rename(public_path($filePath), $path);
-
-            return "{$targetFolder}/{$filename}";
+            return new DicicipFileInfo(
+                $path,
+                $thumbPath,
+                $relativeFilePath,
+                $relativeThumbPath,
+                $filename
+            );
 
         }
 

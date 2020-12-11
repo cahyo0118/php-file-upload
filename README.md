@@ -41,7 +41,7 @@ class YourClass
 ```php
 public function yourFunction()
 {
-    $this->fileUtil->storeBase64ToTemp('[String Base64]');
+    $fileInfo = $this->fileUtil->storeBase64ToTemp('[String Base64]');
 }
 ```
 
