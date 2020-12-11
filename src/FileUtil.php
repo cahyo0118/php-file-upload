@@ -111,7 +111,7 @@ class FileUtil
 
         /*Is Image File ?*/
         $ext = pathinfo($tempFullPath, PATHINFO_EXTENSION);
-        $filename = time() . '.' . time() . $ext;
+        $filename = time() . '.' . time() . '.' . $ext;
 
         $path = "{$this->rootFilesDirectory}/{$targetRelativeDirectory}/{$filename}";
         $relativeFilePath = "{$this->relativeFilesDirectory}/{$filename}";

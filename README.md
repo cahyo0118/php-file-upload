@@ -45,3 +45,10 @@ public function yourFunction()
 }
 ```
 
+#### Move temporary uploaded file and thumbnail to real folder :
+```php
+public function yourFunction()
+{
+    $fileInfo = $this->fileUtil->storeBase64ToTemp('[String Base64]');
+}
+```
